@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Spelling Practice – Which Spelling Is Correct?</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f0f0f0;
+        text-align: center;
+        padding-top: 40px;
+    }
+    #gameBox {
+        background: white;
+        width: 400px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .answerBtn {
+        display: block;
+        width: 90%;
+        margin: 10px auto;
+        padding: 12px;
+        font-size: 20px;
+        border-radius: 8px;
+        border: none;
+        background: #ddd;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .answerBtn:hover {
+        background: #ccc;
+    }
+    .wrong {
+        background: #ff6b6b !important;
+        color: white;
+    }
+    #questionText {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="gameBox">
+    <h2>Which Spelling Is Correct?</h2>
+
+    <h3 id="questionText">Loading...</h3>
+
+    <div id="answers"></div>
+</div>
+
+<script>
+    // WORD LIST
+    const WORDS = [
+    "accident", "accidentally",
+    "actual", "actually",
+    "address",
+    "answer",
+    "appear",
+    "arrive",
+    "believe",
+    "bicycle",
+    "breath",
+    "breathe",
+    "build",
+    "busy", "business",
+    "calendar",
+    "caught",
+    "centre",
+    "century",
+    "certain",
+    "circle",
+    "complete",
+    "consider",
+    "continue",
+    "decide",
+    "describe",
+    "different",
+    "difficult",
+    "disappear",
+    "early",
+    "earth",
+    "eight", "eighth",
+    "enough",
+    "exercise",
+    "experience",
+    "experiment",
+    "extreme",
+    "famous",
+    "favourite",
+    "February",
+    "forward", "forwards",
+    "fruit",
+    "grammar",
+    "group",
+    "guard",
+    "guide",
+    "heard",
+    "heart",
+    "height",
+    "history",
+    "imagine",
+    "increase",
+    "important",
+    "interest",
+    "island",
+    "knowledge",
+    "learn",
+    "length",
+    "library",
+    "material",
+    "medicine",
+    "mention",
+    "minute",
+    "natural",
+    "naughty",
+    "notice",
+    "occasion", "occasionally",
+    "often",
+    "opposite",
+    "ordinary",
+    "particular",
+    "peculiar",
+    "perhaps",
+    "popular",
+    "position",
+    "possess", "possession",
+    "possible",
+    "potatoes",
+    "pressure",
+    "probably",
+    "promise",
+    "purpose",
+    "quarter",
+    "question",
+    "recent",
+    "regular",
+    "reign",
+    "remember",
+    "sentence",
+    "separate",
+    "special",
+    "straight",
+    "strange",
+    "strength",
+    "suppose",
+    "surprise",
+    "therefore",
+    "though", "although",
+    "thought",
+    "through",
+    "various",
+    "weight",
+    "woman", "women"
+];
+
+    let correctWord = "";
+
+    function randomWord() {
+        return WORDS[Math.floor(Math.random() * WORDS.length)];
+    }
+
+    // Generate incorrect spellings
+    function generateWrongSpellings(word) {
+        let wrongs = new Set();
+
+        while (wrongs.size < 5) {
+            let w = mutateWord(word);
+            if (w !== word) wrongs.add(w);
+        }
+
+        return Array.from(wrongs);
+    }
+
+    // Mutate a word to create a wrong spelling
+    function mutateWord(word) {
+        let arr = word.split("");
+
+        let type = Math.floor(Math.random() * 4);
+
+        switch (type) {
+            case 0: // remove a random letter
+                if (arr.length > 3) {
+                    let i = Math.floor(Math.random() * arr.length);
+                    arr.splice(i, 1);
+                }
+                break;
+
+            case 1: // swap two letters
+                let i1 = Math.floor(Math.random() * arr.length);
+                let i2 = Math.floor(Math.random() * arr.length);
+                [arr[i1], arr[i2]] = [arr[i2], arr[i1]];
+                break;
+
+            case 2: // duplicate a letter
+                let i3 = Math.floor(Math.random() * arr.length);
+                arr.splice(i3, 0, arr[i3]);
+                break;
+
+            case 3: // replace a letter with a random one
+                let i4 = Math.floor(Math.random() * arr.length);
+                let letters = "abcdefghijklmnopqrstuvwxyz";
+                arr[i4] = letters[Math.floor(Math.random() * letters.length)];
+                break;
+        }
+
+        return arr.join("");
+    }
+
+    function nextQuestion() {
+        correctWord = randomWord();
+        document.getElementById("questionText").innerText =
+            `Select the correct spelling`;
+
+        let wrongs = generateWrongSpellings(correctWord);
+        let answers = [correctWord, ...wrongs];
+
+        answers.sort(() => Math.random() - 0.5);
+
+        let answerBox = document.getElementById("answers");
+        answerBox.innerHTML = "";
+
+        answers.forEach(a => {
+            let btn = document.createElement("button");
+            btn.className = "answerBtn";
+            btn.innerText = a;
+            btn.onclick = () => checkAnswer(a, btn);
+            answerBox.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected, btn) {
+        if (selected === correctWord) {
+            nextQuestion();
+        } else {
+            btn.classList.add("wrong");
+        }
+    }
+
+    // Start immediately
+    nextQuestion();
+</script>
+
+</body>
+</html>
