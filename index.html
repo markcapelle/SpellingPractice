@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Spelling Practice – Which Spelling Is Correct?</title>
+<title>Spelling Practice – Class & Level Selector</title>
 
 <style>
     body {
@@ -47,204 +47,247 @@
 
 <body>
 
+<!-- CLASS SELECTOR -->
+<div id="classSelect">
+  <h2>Select Class</h2>
+  <select id="classDropdown">
+    <option value="">-- Choose Class --</option>
+    <option value="First Class">First Class</option>
+    <option value="Fourth Class">Fourth Class</option>
+  </select>
+</div>
+
+<!-- LEVEL SELECTOR -->
+<div id="levelSelect" style="display:none;">
+  <h2>Select Level</h2>
+  <select id="levelDropdown">
+    <option value="">-- Choose Level --</option>
+  </select>
+  <button onclick="startLevel()">Start</button>
+</div>
+
+<!-- GAME BOX -->
 <div id="gameBox">
     <h2>Which Spelling Is Correct?</h2>
-
-    <h3 id="questionText">Loading...</h3>
-
+    <h3 id="questionText">Choose a class to begin</h3>
     <div id="answers"></div>
 </div>
 
 <script>
-    // WORD LIST
-    const WORDS = [
-    "accident", "accidentally",
-    "actual", "actually",
-    "address",
-    "answer",
-    "appear",
-    "arrive",
-    "believe",
-    "bicycle",
-    "breath",
-    "breathe",
-    "build",
-    "busy", "business",
-    "calendar",
-    "caught",
-    "centre",
-    "century",
-    "certain",
-    "circle",
-    "complete",
-    "consider",
-    "continue",
-    "decide",
-    "describe",
-    "different",
-    "difficult",
-    "disappear",
-    "early",
-    "earth",
-    "eight", "eighth",
-    "enough",
-    "exercise",
-    "experience",
-    "experiment",
-    "extreme",
-    "famous",
-    "favourite",
-    "February",
-    "forward", "forwards",
-    "fruit",
-    "grammar",
-    "group",
-    "guard",
-    "guide",
-    "heard",
-    "heart",
-    "height",
-    "history",
-    "imagine",
-    "increase",
-    "important",
-    "interest",
-    "island",
-    "knowledge",
-    "learn",
-    "length",
-    "library",
-    "material",
-    "medicine",
-    "mention",
-    "minute",
-    "natural",
-    "naughty",
-    "notice",
-    "occasion", "occasionally",
-    "often",
-    "opposite",
-    "ordinary",
-    "particular",
-    "peculiar",
-    "perhaps",
-    "popular",
-    "position",
-    "possess", "possession",
-    "possible",
-    "potatoes",
-    "pressure",
-    "probably",
-    "promise",
-    "purpose",
-    "quarter",
-    "question",
-    "recent",
-    "regular",
-    "reign",
-    "remember",
-    "sentence",
-    "separate",
-    "special",
-    "straight",
-    "strange",
-    "strength",
-    "suppose",
-    "surprise",
-    "therefore",
-    "though", "although",
-    "thought",
-    "through",
-    "various",
-    "weight",
-    "woman", "women"
-];
+/* -------------------------
+   FIRST CLASS
+   ------------------------- */
+const FIRST_CLASS_LEVELS = {
+  1: ["cat","dog","sun","man","hat","bag","pen","cup"],
+  2: ["ship","shop","chin","chat","thin","that","when","which"],
+  3: ["cake","bike","time","home","note","cube","line","rope"],
+  4: ["play","stay","tray","gray","day","way","say","may"],
+  5: ["green","sleep","tree","feet","week","meet","deep","keep"],
+  6: ["rain","train","paint","tail","mail","wait","chain","again"]
+};
 
-    let correctWord = "";
+/* -------------------------
+   FOURTH CLASS
+   ------------------------- */
+const FOURTH_CLASS_LEVELS = {
+  1: ["noisy","voice","choice","sentence","noise","point","ointment","poison","fleece","Greece","cheese","between","noon","afternoon","spoon","shoot"],
+  2: ["bloom","broom","choose","smooth","actor","doctor","visitor","conductor","razor","motor","senior","junior","wool","hood","wooden","crooked"],
+  3: ["horn","thorn","plenty","twenty","swan","swamp","wand","wander","colour","favourite","flavour","county","labour","saviour","rumour","harbour"],
+  4: ["hound","around","ground","mountain","shout","thousand","count","blouse","picture","capture","figure","nature","metal","petal","women","waist"],
+  5: ["abbey","traffic","daffodil","ballad","hammer","banner","manner","spanner","innocent","annoy","happen","happy","appear","disappear","barrel","barrier"],
+  6: ["carry","marry","carrot","parrot","hurry","battery","pattern","umbrella","spelling","wedding","pepper","issue","kennel","Kilkenny","Derry","Kerry"],
+  7: ["ribbon","different","difference","difficult","bigger","biggest","illness","million","willing","mirror","squirrel","pattern","kitten","written","dizzy","blizzard"],
+  8: ["comma","common","bottom","process","coffin","Offaly","bonnet","Connacht","collar","dollar","commit","copper","soccer","rubbish","college","suddenly"],
+  9: ["remember","research","reaction","receive","summer","cunning","pudding","support","buzzer","butterfly","roll","village","cabbage","message","cottage","collage"],
+  10: ["battle","kettle","nettle","settle","surely","surprise","struggle","straight","angle","tangle","single","jungle","candle","handle","bundle","gentle"],
+  11: ["visible","invisible","tumble","marble","double","trouble","country","cousin","metre","cradle","measles","ramble","twenty","thirty","forty","fifty"],
+  12: ["sparrow","narrow","Sorrow","tomorrow","widow","elbow","Carlow","Wicklow","shadow","throw","flow","grown","angel","label","cancel","parcel"],
+  13: ["among","amuse","amount","example","bucket","jacket","packet","rocket","edge","hedge","hedgehog","judge","base","case","chase","basin"],
+  14: ["health","birthday","death","breath","laugh","queue","January","February","anger","angry","animal","answer","sign","design","destroy","aunt"],
+  15: ["allow","coward","powder","flower","action","fraction","addition","condition","admit","admission","confess","confession","fruit","juice","suit","suitable"],
+  16: ["rough","tough","enough","cough","graph","photograph","autograph","biography","dry","dried","drier","hair-dryer","aerial","aeroplane","chalk","stalk"],
+  17: ["cent","century","centimetre","centre","certain","certainly","celery","cereal","city","citizen","circus","cinema","decide","decision","decimal","decent"],
+  18: ["receive","receipt","ceiling","Leitrim","cycle","bicycle","cycling","cyclist","though","although","already","almost","voice","choice","rejoice","cuboid"],
+  19: ["pitch","witch","stitch","kitchen","employ","employer","annoy","voyage","cause","sauce","saucer","August","oak","soak","blackboard","cardboard"],
+  20: ["probable","probably","possible","possibly","hitting","running","stopping","chopping","putting","swimming","stepping","rubbing","coming","writing","taking","joking"],
+  21: ["happily","merrily","lazily","scarily","carton","cardigan","carnival","cardinal","caught","taught","daughter","slaughter","manage","manager","damage","garage"],
+  22: ["bomb","lamb","doubt","debt","half","calf","calm","palm","honest","honesty","honour","hour","knew","knight","knuckle","knocker"],
+  23: ["knob","know","known","knowledge","Autumn","column","solemn","condemn","wrench","wriggle","wrestle","wretched","wrinkle","Wednesday","hymn","island"],
+  24: ["length","strength","enemy","environment","beauty","beautiful","pity","pitiful","handful","cupful","spoonful","mouthful","messenger","passenger","mixture","fixture"],
+  25: ["direct","direction","director","directory","discuss","disease","discovery","disabled","grace","graceful","disgrace","disgraceful","magnet","magpie","magnify","magazine"],
+  26: ["midday","midnight","mineral","middle","shield","yield","force","advice","miner","microphone","microscope","microwave","lion","riot","violin","violet"],
+  27: ["fuel","duel","cruel","avenue","advantage","adventure","admire","adore","baptise","baptism","gigantic","until","captain","bargain","curtain","villain"],
+  28: ["tomato","potato","eighteen","eighty","witch","ditch","chest","change","raw","dawn","bawl","claw","ought","fought","lately","lonely"],
+  29: ["marble","purple","simple","candle","bubble","paddle","battle","kettle","stir","skirt","thirsty","bird","achieve","believe","thief","piece"],
+  30: ["tow","pillow","narrow","fellow","except","excuse","expect","exact","discover","cover","oven","over","receive","native","given","active"],
+  31: ["pour","fourth","soup","group","September","October","November","December","valley","woollen","tonne","across","succeed","success","successful","business"],
+  32: ["famous","dangerous","nervous","curious","moment","movement","spent","entertainment","hectare","aware","careful","area","telephone","television","towel","elephant"],
+  33: ["scrape","scream","scribble","scramble","material","thunder","together","helicopter","notice","police","choice","licence","zero","piano","radio","volcano"],
+  34: ["reward","afterwards","towards","awkward","chance","balance","distance","ambulance","journey","thought","through","aloud","erosion","conclusion","mission","revision"]
+};
 
-    function randomWord() {
-        return WORDS[Math.floor(Math.random() * WORDS.length)];
+/* -------------------------
+   CLASS COLLECTION
+   ------------------------- */
+const CLASSES = {
+    "First Class": FIRST_CLASS_LEVELS,
+    "Fourth Class": FOURTH_CLASS_LEVELS
+};
+
+/* -------------------------
+   GAME STATE
+   ------------------------- */
+let currentClass = null;
+let currentLevel = null;
+let words = [];
+let index = 0;
+let mistakes = [];
+
+/* -------------------------
+   CLASS SELECTION HANDLER
+   ------------------------- */
+document.getElementById("classDropdown").onchange = () => {
+    currentClass = document.getElementById("classDropdown").value;
+    const levelDropdown = document.getElementById("levelDropdown");
+
+    levelDropdown.innerHTML = '<option value="">-- Choose Level --</option>';
+
+    if (!currentClass) return;
+
+    const levels = CLASSES[currentClass];
+    const levelNumbers = Object.keys(levels);
+
+    levelNumbers.forEach(num => {
+        let opt = document.createElement("option");
+        opt.value = num;
+        opt.textContent = `Level ${num}`;
+        levelDropdown.appendChild(opt);
+    });
+
+    document.getElementById("levelSelect").style.display = "block";
+};
+
+/* -------------------------
+   START LEVEL
+   ------------------------- */
+function startLevel() {
+    currentLevel = parseInt(document.getElementById("levelDropdown").value);
+    words = [...CLASSES[currentClass][currentLevel]];
+    index = 0;
+    mistakes = [];
+
+    document.getElementById("classSelect").style.display = "none";
+    document.getElementById("levelSelect").style.display = "none";
+
+    nextWord();
+}
+
+/* -------------------------
+   GAME LOOP
+   ------------------------- */
+function nextWord() {
+    if (index >= words.length) {
+        endLevel();
+        return;
     }
 
-    // Generate incorrect spellings
-    function generateWrongSpellings(word) {
-        let wrongs = new Set();
+    let correct = words[index];
+    let wrongs = generateWrongSpellings(correct);
+    let options = [correct, ...wrongs].sort(() => Math.random() - 0.5);
 
-        while (wrongs.size < 5) {
-            let w = mutateWord(word);
-            if (w !== word) wrongs.add(w);
-        }
+    renderQuestion(correct, options);
+}
 
-        return Array.from(wrongs);
+function renderQuestion(correct, options) {
+    document.getElementById("questionText").innerText = "Choose the correct spelling:";
+    let box = document.getElementById("answers");
+    box.innerHTML = "";
+
+    options.forEach(opt => {
+        let btn = document.createElement("button");
+        btn.className = "answerBtn";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if (opt === correct) {
+                index++;
+                nextWord();
+            } else {
+                btn.classList.add("wrong");
+                mistakes.push(correct);
+            }
+        };
+        box.appendChild(btn);
+    });
+}
+
+/* -------------------------
+   END LEVEL SUMMARY
+   ------------------------- */
+function endLevel() {
+    let box = document.getElementById("answers");
+    box.innerHTML = "";
+
+    let summary = document.getElementById("questionText");
+    summary.innerHTML = `Level ${currentLevel} complete!<br>
+                         Mistakes: ${mistakes.length}`;
+
+    let list = document.createElement("div");
+    CLASSES[currentClass][currentLevel].forEach(word => {
+        let item = document.createElement("div");
+        item.innerText = word;
+        if (mistakes.includes(word)) item.style.color = "red";
+        list.appendChild(item);
+    });
+
+    box.appendChild(list);
+
+    let restart = document.createElement("button");
+    restart.innerText = "Restart";
+    restart.onclick = () => location.reload();
+    box.appendChild(restart);
+}
+
+/* -------------------------
+   WRONG SPELLING GENERATOR
+   ------------------------- */
+function mutateWord(word) {
+    let arr = word.split("");
+    let type = Math.floor(Math.random() * 4);
+
+    switch (type) {
+        case 0:
+            if (arr.length > 3) {
+                let i = Math.floor(Math.random() * arr.length);
+                arr.splice(i, 1);
+            }
+            break;
+        case 1:
+            let i1 = Math.floor(Math.random() * arr.length);
+            let i2 = Math.floor(Math.random() * arr.length);
+            [arr[i1], arr[i2]] = [arr[i2], arr[i1]];
+            break;
+        case 2:
+            let i3 = Math.floor(Math.random() * arr.length);
+            arr.splice(i3, 0, arr[i3]);
+            break;
+        case 3:
+            let i4 = Math.floor(Math.random() * arr.length);
+            let letters = "abcdefghijklmnopqrstuvwxyz";
+            arr[i4] = letters[Math.floor(Math.random() * letters.length)];
+            break;
     }
 
-    // Mutate a word to create a wrong spelling
-    function mutateWord(word) {
-        let arr = word.split("");
+    return arr.join("");
+}
 
-        let type = Math.floor(Math.random() * 4);
-
-        switch (type) {
-            case 0: // remove a random letter
-                if (arr.length > 3) {
-                    let i = Math.floor(Math.random() * arr.length);
-                    arr.splice(i, 1);
-                }
-                break;
-
-            case 1: // swap two letters
-                let i1 = Math.floor(Math.random() * arr.length);
-                let i2 = Math.floor(Math.random() * arr.length);
-                [arr[i1], arr[i2]] = [arr[i2], arr[i1]];
-                break;
-
-            case 2: // duplicate a letter
-                let i3 = Math.floor(Math.random() * arr.length);
-                arr.splice(i3, 0, arr[i3]);
-                break;
-
-            case 3: // replace a letter with a random one
-                let i4 = Math.floor(Math.random() * arr.length);
-                let letters = "abcdefghijklmnopqrstuvwxyz";
-                arr[i4] = letters[Math.floor(Math.random() * letters.length)];
-                break;
-        }
-
-        return arr.join("");
+function generateWrongSpellings(word) {
+    let wrongs = new Set();
+    while (wrongs.size < 5) {
+        let w = mutateWord(word);
+        if (w !== word) wrongs.add(w);
     }
-
-    function nextQuestion() {
-        correctWord = randomWord();
-        document.getElementById("questionText").innerText =
-            `Select the correct spelling`;
-
-        let wrongs = generateWrongSpellings(correctWord);
-        let answers = [correctWord, ...wrongs];
-
-        answers.sort(() => Math.random() - 0.5);
-
-        let answerBox = document.getElementById("answers");
-        answerBox.innerHTML = "";
-
-        answers.forEach(a => {
-            let btn = document.createElement("button");
-            btn.className = "answerBtn";
-            btn.innerText = a;
-            btn.onclick = () => checkAnswer(a, btn);
-            answerBox.appendChild(btn);
-        });
-    }
-
-    function checkAnswer(selected, btn) {
-        if (selected === correctWord) {
-            nextQuestion();
-        } else {
-            btn.classList.add("wrong");
-        }
-    }
-
-    // Start immediately
-    nextQuestion();
+    return Array.from(wrongs);
+}
 </script>
 
 </body>
